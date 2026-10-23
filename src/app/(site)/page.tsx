@@ -84,7 +84,7 @@ export default async function HomePage() {
         <div className="wrap">
           <div className="stats-row">
             <div className="stat-cell"><div className="n"><span className="val">3</span></div><span className="l">{t("home.stat1")}</span></div>
-            <div className="stat-cell"><div className="n"><span className="val">3</span><span className="suffix"> {t("home.stat2suffix")}</span></div><span className="l">{t("home.stat2")}</span></div>
+            <div className="stat-cell"><div className="n"><span className="val">+5</span><span className="suffix"> {t("home.stat2suffix")}</span></div><span className="l">{t("home.stat2")}</span></div>
             <div className="stat-cell"><div className="n"><span className="val">24</span><span className="suffix"> h</span></div><span className="l">{t("home.stat3")}</span></div>
             <div className="stat-cell"><div className="n"><span className="val">100</span><span className="suffix">%</span></div><span className="l">{t("home.stat4")}</span></div>
           </div>

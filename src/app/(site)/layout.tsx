@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { TawkChat } from "@/components/TawkChat";
 import { dictionaryFor } from "@/i18n";
 import { I18nProvider } from "@/i18n/client";
 import { getT } from "@/i18n/server";
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           {children}
           <Footer />
+          <TawkChat />
         </I18nProvider>
       </body>
     </html>

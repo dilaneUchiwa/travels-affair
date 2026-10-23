@@ -58,7 +58,7 @@ export const common: Record<string, Entry> = {
   "home.commitments": ["Nos engagements", "Our commitments"],
   "home.stat1": ["devises : XAF, EUR, USD", "currencies: XAF, EUR, USD"],
   "home.stat2suffix": ["moyens", "ways"],
-  "home.stat2": ["carte, PayPal, Orange Money, MTN MoMo", "card, PayPal, Orange Money, MTN MoMo"],
+  "home.stat2": ["Orange Money, MTN MoMo, Express Union, Visa, Mastercard, PayPal", "Orange Money, MTN MoMo, Express Union, Visa, Mastercard, PayPal"],
   "home.stat3": ["rappels automatiques avant départ", "automatic reminders before departure"],
   "home.stat4": ["documents PDF avec QR code", "PDF documents with QR code"],
   "home.services": ["Nos services", "Our services"],
