@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookingBadge, Card, PageTitle, Strong, TableWrap, Td, Th, btnPrimary, inputCls } from "@/components/admin/ui";
+import { BookingBadge, Card, PageTitle, Strong, TableWrap, Td, Th, btnOutline, btnPrimary, inputCls } from "@/components/admin/ui";
 import { adminChangeStatusAction } from "@/modules/bookings/actions";
 import { listAllBookings } from "@/modules/bookings/service";
 import { BOOKING_STATUSES, STATUS_LABELS, allowedTransitions, isBookingStatus } from "@/modules/bookings/status";
@@ -25,14 +25,23 @@ function StatusForm({ id, next }: { id: string; next: ReturnType<typeof allowedT
 
 const SERVICE: Record<string, string> = { FLIGHT: "Vol", HOTEL: "Hébergement", TRANSPORT: "Transport", CAR: "Location", ACTIVITY: "Activité" };
 
-export default async function AdminBookings({ searchParams }: { searchParams: { status?: string; type?: string } }) {
+export default async function AdminBookings({ searchParams }: { searchParams: { status?: string; type?: string; q?: string } }) {
   const status = searchParams.status && isBookingStatus(searchParams.status) ? searchParams.status : undefined;
   const type = searchParams.type && SERVICE[searchParams.type] ? searchParams.type : undefined;
-  const bookings = await listAllBookings({ status, type });
+  const q = (searchParams.q ?? "").trim().toLowerCase();
+  const all = await listAllBookings({ status, type });
+  const bookings = q ? all.filter((b) => [b.reference, b.user.name, b.user.email, b.title].some((v) => v.toLowerCase().includes(q))) : all;
   return (
     <>
-      <PageTitle title="Réservations" />
+      <PageTitle title="Réservations">
+        <Link href="/admin/reservations/nouveau" className={btnPrimary}>Nouvelle réservation</Link>
+        <a href="/api/admin/export/reservations" className={btnOutline}>Exporter CSV</a>
+      </PageTitle>
       <form method="get" className="mb-5 flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="flt-q" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Recherche</label>
+          <input id="flt-q" name="q" defaultValue={searchParams.q ?? ""} placeholder="Référence, client, e-mail…" className={`${inputCls} min-w-60`} />
+        </div>
         <div>
           <label htmlFor="flt-status" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Statut</label>
           <select id="flt-status" name="status" defaultValue={status ?? ""} className={`${inputCls} min-w-52`}>

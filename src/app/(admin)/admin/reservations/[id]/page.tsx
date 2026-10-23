@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Badge, BookingBadge, Card, PageTitle, Strong, TableWrap, Td, Th, btnOutline, btnPrimary, inputCls } from "@/components/admin/ui";
 import { getT } from "@/i18n/server";
 import { requireAdmin } from "@/modules/auth/session";
-import { adminChangeStatusAction } from "@/modules/bookings/actions";
+import { adminChangeStatusAction, adminRecordPaymentAction, adminResendEmailAction } from "@/modules/bookings/actions";
 import { getBookingFor } from "@/modules/bookings/service";
 import { allowedTransitions, STATUS_LABELS } from "@/modules/bookings/status";
 import { parseDetails, detailValue, priceBreakdown } from "@/modules/bookings/view";
@@ -21,6 +21,14 @@ export const dynamic = "force-dynamic";
 const METHOD = Object.fromEntries(PAYMENT_METHODS.map((m) => [m.value, m.label]));
 const TICKET_STATUSES = ["PAID", "AWAITING_CONFIRMATION", "CONFIRMED", "MODIFIED"];
 const DOC_LABEL: Record<string, string> = { confirmation: "Confirmation", summary: "Récapitulatif", invoice: "Facture", voucher: "Bon d'échange" };
+const RESEND_OPTIONS: { value: string; label: string }[] = [
+  { value: "PENDING_PAYMENT", label: "Instructions de paiement" },
+  { value: "PAYMENT_RECEIVED", label: "Confirmation de paiement (facture)" },
+  { value: "CONFIRMED", label: "Confirmation (billet / bon)" },
+  { value: "MODIFIED", label: "Avis de modification" },
+  { value: "CANCELLED", label: "Avis d'annulation" },
+  { value: "REFUNDED", label: "Avis de remboursement" },
+];
 const payBadge = (s: string) => (s === "SUCCEEDED" ? <Badge color="success">Réussi</Badge> : s === "FAILED" ? <Badge color="error">Échoué</Badge> : <Badge color="warning">En attente</Badge>);
 
 export default async function AdminBookingDetail({ params }: { params: { id: string } }) {
@@ -107,6 +115,30 @@ export default async function AdminBookingDetail({ params }: { params: { id: str
                 <button type="submit" className={btnPrimary}>Appliquer</button>
               </form>
             )}
+          </Card>
+
+          {b.status === "PENDING_PAYMENT" && (
+            <Card title="Encaissement manuel">
+              <p className="mb-3 text-theme-xs text-gray-500">Règlement reçu hors ligne (espèces, Orange Money/WhatsApp). Enregistre un paiement et passe la réservation en « Payée ».</p>
+              <form action={adminRecordPaymentAction} className="flex items-center gap-2">
+                <input type="hidden" name="bookingId" value={b.id} />
+                <select name="method" aria-label="Moyen de paiement" className={`${inputCls} min-w-40`}>
+                  {PAYMENT_METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
+                </select>
+                <button type="submit" className={btnPrimary}>Encaisser</button>
+              </form>
+            </Card>
+          )}
+
+          <Card title="Renvoyer un e-mail">
+            <form action={adminResendEmailAction} className="flex flex-col gap-2">
+              <input type="hidden" name="bookingId" value={b.id} />
+              <select name="kind" aria-label="Type d'e-mail" className={inputCls} defaultValue="PAYMENT_RECEIVED">
+                {RESEND_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <button type="submit" className={btnOutline}>Renvoyer au client</button>
+            </form>
+            <p className="mt-2 text-theme-xs text-gray-500">Envoyé à {b.user.email}. Les PDF (facture, billet/bon) sont joints selon le type.</p>
           </Card>
 
           {qr && (

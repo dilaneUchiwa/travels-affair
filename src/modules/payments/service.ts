@@ -6,7 +6,7 @@ import { conflict } from "@/shared/errors";
 import { isCurrency } from "@/shared/money";
 import { changeStatus, getBookingFor } from "@/modules/bookings/service";
 import { getProvider } from "./registry";
-import { paymentInputSchema, type PaymentMethod } from "./schemas";
+import { PAYMENT_METHODS, paymentInputSchema, type PaymentMethod } from "./schemas";
 import type { VerifyResult } from "./provider";
 
 export type PayOutcome = { paid: true } | { paid: false; redirectUrl?: string; pending: true };
@@ -73,6 +73,21 @@ export async function payBooking(user: { id: string; role: string }, bookingId: 
   }
   await settlePayment(paymentId, { status: "FAILED", reason: result.reason });
   throw conflict(`Paiement refusé : ${result.reason}`);
+}
+
+/** Encaissement manuel (agence) : enregistre un paiement réussi et passe la réservation en « Payée ».
+ *  Pour les règlements reçus hors ligne (espèces, Orange Money/WhatsApp) sans passer par une passerelle. */
+export async function recordManualPayment(admin: { id: string; role: string }, bookingId: string, method: string) {
+  if (!(PAYMENT_METHODS as readonly string[]).includes(method)) throw conflict("Moyen de paiement inconnu.");
+  const booking = await getBookingFor(admin, bookingId);
+  if (booking.status !== "PENDING_PAYMENT") throw conflict("Cette réservation n'attend plus de paiement.");
+  if (!isCurrency(booking.currency)) throw conflict("Devise non prise en charge.");
+  if (booking.payments.some((p) => p.status === "PENDING")) throw conflict("Un paiement est déjà en cours de traitement.");
+  await db.insert(payments).values({
+    id: crypto.randomUUID(), bookingId: booking.id, method: method as PaymentMethod, provider: "MANUAL",
+    amount: booking.total, currency: booking.currency, status: "SUCCEEDED", providerReference: "Encaissement manuel (agence)",
+  });
+  await changeStatus(booking.id, "PAID");
 }
 
 /** Interroge le prestataire pour les paiements en cours d'une réservation. */

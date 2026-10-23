@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { desc, eq } from "drizzle-orm";
-import { Badge, Card, Metric, PageTitle, Strong, TableWrap, Td, Th } from "@/components/admin/ui";
+import { Badge, Card, Metric, PageTitle, Strong, TableWrap, Td, Th, btnOutline, btnPrimary, inputCls } from "@/components/admin/ui";
 import { bookings, db, payments, users } from "@/db";
 import { PAYMENT_METHODS } from "@/modules/settings/definitions";
 import { formatDateTime } from "@/shared/dates";
@@ -13,8 +13,13 @@ const METHOD = Object.fromEntries(PAYMENT_METHODS.map((m) => [m.value, m.label])
 const statusBadge = (s: string) =>
   s === "SUCCEEDED" ? <Badge color="success">Réussi</Badge> : s === "FAILED" ? <Badge color="error">Échoué</Badge> : <Badge color="warning">En attente</Badge>;
 
-export default async function AdminPayments() {
-  const rows = await db
+const STATUSES = [["SUCCEEDED", "Réussi"], ["PENDING", "En attente"], ["FAILED", "Échoué"]];
+
+export default async function AdminPayments({ searchParams }: { searchParams: { status?: string; method?: string; q?: string } }) {
+  const fStatus = searchParams.status ?? "";
+  const fMethod = searchParams.method ?? "";
+  const q = (searchParams.q ?? "").trim().toLowerCase();
+  const all = await db
     .select({
       id: payments.id, method: payments.method, provider: payments.provider,
       amount: payments.amount, currency: payments.currency, status: payments.status,
@@ -26,13 +31,41 @@ export default async function AdminPayments() {
     .leftJoin(users, eq(bookings.userId, users.id))
     .orderBy(desc(payments.createdAt));
 
+  const rows = all.filter((r) =>
+    (!fStatus || r.status === fStatus) &&
+    (!fMethod || r.method === fMethod) &&
+    (!q || [r.bookingRef, r.customer, r.email, r.ref].some((v) => (v ?? "").toLowerCase().includes(q))),
+  );
   const ok = rows.filter((r) => r.status === "SUCCEEDED");
   const pending = rows.filter((r) => r.status === "PENDING").length;
   const failed = rows.filter((r) => r.status === "FAILED").length;
 
   return (
     <>
-      <PageTitle title="Paiements" />
+      <PageTitle title="Paiements">
+        <a href="/api/admin/export/paiements" className={btnOutline}>Exporter CSV</a>
+      </PageTitle>
+      <form method="get" className="mb-5 flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="flt-q" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Recherche</label>
+          <input id="flt-q" name="q" defaultValue={searchParams.q ?? ""} placeholder="Réservation, client, e-mail…" className={`${inputCls} min-w-60`} />
+        </div>
+        <div>
+          <label htmlFor="flt-status" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Statut</label>
+          <select id="flt-status" name="status" defaultValue={fStatus} className={`${inputCls} min-w-44`}>
+            <option value="">Tous</option>
+            {STATUSES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="flt-method" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Moyen</label>
+          <select id="flt-method" name="method" defaultValue={fMethod} className={`${inputCls} min-w-44`}>
+            <option value="">Tous</option>
+            {PAYMENT_METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
+        </div>
+        <button type="submit" className={btnPrimary}>Filtrer</button>
+      </form>
       <div className="mb-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Metric label="Transactions" value={rows.length} />
         <Metric label="Réussies" value={ok.length} />
