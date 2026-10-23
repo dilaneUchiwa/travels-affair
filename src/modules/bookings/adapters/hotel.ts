@@ -31,7 +31,7 @@ export const hotelAdapter: ServiceAdapter = {
     const h = prop.hotel;
     return {
       itemId: prop.id,
-      title: `${h.name} — ${prop.name}`,
+      title: `${h.name} · ${prop.name}`,
       subtitle: `${"★".repeat(h.stars)} · ${h.city}, ${h.country}`,
       startAt: from,
       endAt: to,

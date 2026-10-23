@@ -13,17 +13,16 @@ export const transportAdapter: ServiceAdapter = {
     const seats = input.participants.length;
     const t = await tx.query.transports.findFirst({ where: eq(transports.id, input.itemId), with: { provider: true } });
     if (!t || t.status !== "PUBLISHED" || t.departAt <= new Date()) throw notFound("Ce transport n'est plus disponible.");
-    const updated = await tx
+    const [updated] = await tx
       .update(transports)
       .set({ seatsAvailable: sql`${transports.seatsAvailable} - ${seats}` })
-      .where(and(eq(transports.id, t.id), gte(transports.seatsAvailable, seats)))
-      .returning({ id: transports.id });
-    if (updated.length === 0) throw conflict("Il ne reste pas assez de places sur ce trajet.");
+      .where(and(eq(transports.id, t.id), gte(transports.seatsAvailable, seats)));
+    if (updated.affectedRows === 0) throw conflict("Il ne reste pas assez de places sur ce trajet.");
     const details: [string, string][] = [
       ["provider", t.provider.name],
       ["mode", t.mode],
-      ["departure", `${t.fromPlace} — ${formatDateTime(t.departAt)}`],
-      ["arrival", `${t.toPlace} — ${formatDateTime(t.arriveAt)}`],
+      ["departure", `${t.fromPlace} · ${formatDateTime(t.departAt)}`],
+      ["arrival", `${t.toPlace} · ${formatDateTime(t.arriveAt)}`],
       ["participants", input.participants.join(", ")],
     ];
     if (t.driverName) details.push(["driver", t.driverName]);

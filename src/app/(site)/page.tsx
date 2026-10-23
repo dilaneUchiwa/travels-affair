@@ -4,12 +4,25 @@ import Link from "next/link";
 import { Finder } from "@/components/Finder";
 import { ActivitySearch, CarSearch, HotelSearch, TransportSearch } from "@/components/QuickSearch";
 import { SearchTabs } from "@/components/SearchTabs";
+import { Partners } from "@/components/Partners";
 import { getT } from "@/i18n/server";
 import { featuredFlights } from "@/modules/flights/service";
 import { formatDateTime, formatDuration } from "@/shared/dates";
 import { price } from "@/shared/price";
 
 export const dynamic = "force-dynamic";
+
+// Ville de destination -> photo (public/img/p). Repli sur l'image d'accueil.
+const CITY_IMG: Record<string, string> = {
+  douala: "city-douala", yaounde: "city-yaounde", kribi: "city-kribi", paris: "city-paris",
+  bruxelles: "city-bruxelles", istanbul: "city-istanbul", casablanca: "city-casablanca",
+  "addis-abeba": "city-addis", "addis abeba": "city-addis", londres: "city-londres",
+};
+const cityImg = (city: string) => {
+  const key = city.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const slug = CITY_IMG[key];
+  return slug ? `/img/p/${slug}.jpg` : "/img/hero.jpg";
+};
 
 const STEPS = [1, 2, 3];
 const SERVICES = [
@@ -78,6 +91,24 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="section how" aria-labelledby="how-title">
+        <div className="wrap">
+          <div className="how-head">
+            <span className="eyebrow">{t("home.how")}</span>
+            <h2 className="h-sec" id="how-title" style={{ maxWidth: "none" }}>{t("home.howTitle")}</h2>
+          </div>
+          <div className="steps">
+            {STEPS.map((n) => (
+              <article className="step" key={n}>
+                <div className="step-num">{STEP_ICONS[n - 1]}<span className="idx">{n}</span></div>
+                <h3>{t(`home.step${n}.title`)}</h3>
+                <p>{t(`home.step${n}.text`)}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="section" aria-labelledby="services-title" style={{ paddingBottom: 0 }}>
         <div className="wrap">
           <span className="eyebrow">{t("home.services")}</span>
@@ -109,8 +140,12 @@ export default async function HomePage() {
             <div className="tours-grid">
               {flights.map((f) => (
                 <article className="tour" key={f.id}>
-                  <div className="tour-route" aria-hidden="true">
-                    <span>{f.fromAirport}</span><span className="plane">✈</span><span>{f.toAirport}</span>
+                  <div className="tour-media">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={cityImg(f.toCity)} alt={f.toCity} loading="lazy" />
+                    <div className="tour-route" aria-hidden="true">
+                      <span>{f.fromAirport}</span><span className="plane">✈</span><span>{f.toAirport}</span>
+                    </div>
                   </div>
                   <div className="tour-body">
                     <div className="tour-meta">
@@ -134,21 +169,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section how" aria-labelledby="how-title">
+      <section className="section" aria-label={lang === "en" ? "Our premises and partners" : "Nos locaux et partenaires"}>
         <div className="wrap">
-          <div className="how-head">
-            <span className="eyebrow">{t("home.how")}</span>
-            <h2 className="h-sec" id="how-title" style={{ maxWidth: "none" }}>{t("home.howTitle")}</h2>
+          <div className="agency-gallery" style={{ marginTop: 0 }}>
+            <h2>{lang === "en" ? "Our premises" : "Nos locaux"}</h2>
+            <div className="agency-gallery-grid">
+              {["devanture", "agence-1", "agence-2", "agence-4", "agence-5", "agence-6"].map((n) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={n} src={`/img/site/${n}.jpg`} alt="Travel's Affair" loading="lazy" width="800" height="599" />
+              ))}
+            </div>
           </div>
-          <div className="steps">
-            {STEPS.map((n) => (
-              <article className="step" key={n}>
-                <div className="step-num">{STEP_ICONS[n - 1]}<span className="idx">{n}</span></div>
-                <h3>{t(`home.step${n}.title`)}</h3>
-                <p>{t(`home.step${n}.text`)}</p>
-              </article>
-            ))}
-          </div>
+          <Partners lang={lang} />
         </div>
       </section>
     </main>

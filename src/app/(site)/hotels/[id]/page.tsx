@@ -17,7 +17,7 @@ const load = (id: string) => getHotel(id).catch((e) => { if (e instanceof AppErr
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const h = await load(params.id);
-  const title = `${h.name} — ${h.city}`;
+  const title = `${h.name} · ${h.city}`;
   const photo = parsePhotos(h.photos)[0];
   return { title, description: h.description || title, alternates: { canonical: `/hotels/${h.id}` }, openGraph: { title, description: h.description || title, images: photo ? [photo] : undefined } };
 }

@@ -74,7 +74,8 @@ export function AdminShell({ user, children }: Props) {
       >
         <div className={`flex py-8 ${wide ? "justify-start" : "xl:justify-center"}`}>
           <Link href="/admin" className="flex items-center gap-3 text-xl font-semibold text-gray-800 dark:text-white/90">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-brand-500 text-white">✈</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/site/logo.jpg" alt="Travel's Affair" width="36" height="36" className="size-9 rounded-lg object-contain bg-white" />
             {wide && <span>Travel&apos;s Affair</span>}
           </Link>
         </div>

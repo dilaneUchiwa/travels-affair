@@ -1,12 +1,12 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1792771822988,
-      "tag": "0000_green_stepford_cuckoos",
+      "version": "5",
+      "when": 1792784745096,
+      "tag": "0000_massive_living_mummy",
       "breakpoints": true
     }
   ]

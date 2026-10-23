@@ -12,10 +12,12 @@ export async function registerUser(input: unknown, lang: "fr" | "en" = "fr") {
   const data = registerSchema.parse(input);
   const existing = await db.query.users.findFirst({ where: eq(users.email, data.email) });
   if (existing) throw conflict("Un compte existe déjà avec cet e-mail.");
-  const [user] = await db
+  const id = crypto.randomUUID();
+  await db
     .insert(users)
-    .values({ name: data.name, email: data.email, lang, passwordHash: await bcrypt.hash(data.password, 10) })
-    .returning();
+    .values({ id, name: data.name, email: data.email, lang, passwordHash: await bcrypt.hash(data.password, 10) });
+  const user = await db.query.users.findFirst({ where: eq(users.id, id) });
+  if (!user) throw new Error("Utilisateur introuvable après création.");
   return user;
 }
 

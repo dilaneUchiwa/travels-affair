@@ -65,7 +65,7 @@ export async function saveConfig(fd: FormData) {
   if (csv(values["payment.methods"]).length === 0) throw invalid("Activez au moins un moyen de paiement.");
   await db.transaction(async (tx) => {
     for (const [key, value] of Object.entries(values)) {
-      await tx.insert(settings).values({ key, value }).onConflictDoUpdate({ target: settings.key, set: { value } });
+      await tx.insert(settings).values({ key, value }).onDuplicateKeyUpdate({ set: { value } });
     }
   });
   await loadConfig(true);

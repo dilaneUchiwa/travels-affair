@@ -31,7 +31,7 @@ function Control({ f, row, options, suggestions }: { f: Field; row: Row; options
     case "relation":
       return (
         <select {...common} defaultValue={String(v ?? "")}>
-          <option value="" disabled>— Choisir —</option>
+          <option value="" disabled>Choisir…</option>
           {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       );

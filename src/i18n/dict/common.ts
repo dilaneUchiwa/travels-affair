@@ -1,11 +1,12 @@
 import type { Entry } from "../dictionary";
 
 export const common: Record<string, Entry> = {
-  "meta.title": ["Travel's Affair — Voyages Afrique ↔ Europe : vols, hôtels, transports, voitures, activités", "Travel's Affair — Africa ↔ Europe travel: flights, hotels, transport, car rental, activities"],
+  "meta.title": ["Travel's Affair · Voyages Afrique ↔ Europe : vols, hôtels, transports, voitures, activités", "Travel's Affair · Africa ↔ Europe travel: flights, hotels, transport, car rental, activities"],
   "meta.description": ["Réservez vos vols, hébergements, transports, locations de voiture et activités en ligne avec Travel's Affair, agence basée à Yaoundé. Paiement sécurisé, billet avec QR code.", "Book flights, accommodation, transport, car rental and activities online with Travel's Affair, a Yaoundé-based agency. Secure payment, QR-code ticket."],
 
   "nav.main": ["Navigation principale", "Main navigation"],
-  "nav.homeAria": ["Travel's Affair — accueil", "Travel's Affair — home"],
+  "nav.homeAria": ["Travel's Affair · accueil", "Travel's Affair · home"],
+  "nav.book": ["Réserver", "Book"],
   "nav.flights": ["Vols", "Flights"],
   "nav.hotels": ["Hôtels", "Hotels"],
   "nav.transports": ["Transports", "Transport"],

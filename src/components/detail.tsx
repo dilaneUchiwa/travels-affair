@@ -120,7 +120,7 @@ export function Policy({ title, icon, text }: { title: string; icon: IconName; t
   return (
     <details className="d-policy" open>
       <summary><span className="ic"><Icon name={icon} size={18} /></span>{title}</summary>
-      <Prose text={text || "—"} />
+      <Prose text={text || "–"} />
     </details>
   );
 }

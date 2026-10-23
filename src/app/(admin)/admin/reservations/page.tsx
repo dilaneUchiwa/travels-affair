@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Réservations" };
 export const dynamic = "force-dynamic";
 
 function StatusForm({ id, next }: { id: string; next: ReturnType<typeof allowedTransitions> }) {
-  if (next.length === 0) return <>—</>;
+  if (next.length === 0) return <>–</>;
   return (
     <form action={adminChangeStatusAction} className="flex items-center gap-2">
       <input type="hidden" name="bookingId" value={id} />

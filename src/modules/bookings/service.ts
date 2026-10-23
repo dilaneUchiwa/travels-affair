@@ -34,9 +34,11 @@ export async function createBooking(userId: string, raw: unknown, opts: { curren
   const booking = await db.transaction(async (tx) => {
     let r = await adapter.reserve(tx, raw);
     if (opts.currency && isCurrency(r.currency) && r.currency !== opts.currency) r = { ...r, unitPrice: convertRounded(r.unitPrice, r.currency, opts.currency), currency: opts.currency };
-    const [created] = await tx
+    const createdId = crypto.randomUUID();
+    await tx
       .insert(bookings)
       .values({
+        id: createdId,
         reference: newReference(),
         userId,
         serviceType: adapter.type,
@@ -53,9 +55,10 @@ export async function createBooking(userId: string, raw: unknown, opts: { curren
         unitPrice: r.unitPrice,
         total: r.unitPrice * r.quantity * r.multiplier,
         currency: r.currency,
-      })
-      .returning();
-    await tx.insert(passengers).values(input.participants.map((fullName) => ({ bookingId: created.id, fullName })));
+      });
+    await tx.insert(passengers).values(input.participants.map((fullName) => ({ bookingId: createdId, fullName })));
+    const created = await tx.query.bookings.findFirst({ where: eq(bookings.id, createdId) });
+    if (!created) throw new Error("Réservation introuvable après création.");
     return created;
   });
 
@@ -71,9 +74,9 @@ export async function changeStatus(bookingId: string, to: string, opts: { notify
     if (!current) throw notFound("Réservation introuvable.");
     const from = current.status as BookingStatus;
     assertTransition(from, to);
-    const [row] = await tx.update(bookings).set({ status: to }).where(eq(bookings.id, bookingId)).returning();
+    await tx.update(bookings).set({ status: to }).where(eq(bookings.id, bookingId));
     if (releasesSeats(from, to)) await getAdapter(current.serviceType).release?.(tx, current);
-    return row;
+    return tx.query.bookings.findFirst({ where: eq(bookings.id, bookingId) });
   });
   const kind = EMAIL_FOR_STATUS[to];
   if (kind && opts.notify !== false) await notifyBooking(kind, bookingId);

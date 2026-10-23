@@ -13,12 +13,11 @@ export const activityAdapter: ServiceAdapter = {
     const n = input.participants.length;
     const a = await tx.query.activities.findFirst({ where: eq(activities.id, input.itemId) });
     if (!a || a.status !== "PUBLISHED" || a.startAt <= new Date()) throw notFound("Cette activité n'est plus disponible.");
-    const updated = await tx
+    const [updated] = await tx
       .update(activities)
       .set({ placesAvailable: sql`${activities.placesAvailable} - ${n}` })
-      .where(and(eq(activities.id, a.id), gte(activities.placesAvailable, n)))
-      .returning({ id: activities.id });
-    if (updated.length === 0) throw conflict("Il ne reste pas assez de places pour cette activité.");
+      .where(and(eq(activities.id, a.id), gte(activities.placesAvailable, n)));
+    if (updated.affectedRows === 0) throw conflict("Il ne reste pas assez de places pour cette activité.");
     return {
       itemId: a.id,
       title: a.title,

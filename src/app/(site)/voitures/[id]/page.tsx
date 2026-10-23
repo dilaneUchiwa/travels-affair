@@ -16,7 +16,7 @@ const load = (id: string) => getVehicle(id).catch((e) => { if (e instanceof AppE
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const v = await load(params.id);
-  const title = `${v.model.brand.name} ${v.model.name} — ${v.location}`;
+  const title = `${v.model.brand.name} ${v.model.name} · ${v.location}`;
   const photo = parsePhotos(v.photos)[0];
   return { title, description: title, alternates: { canonical: `/voitures/${v.id}` }, openGraph: { title, images: photo ? [photo] : undefined } };
 }

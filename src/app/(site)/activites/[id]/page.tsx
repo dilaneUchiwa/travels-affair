@@ -16,7 +16,7 @@ const load = (id: string) => getActivity(id).catch((e) => { if (e instanceof App
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const a = await load(params.id);
   const photo = parsePhotos(a.photos)[0];
-  return { title: `${a.title} — ${a.city}`, description: a.description || a.title, alternates: { canonical: `/activites/${a.id}` }, openGraph: { title: a.title, images: photo ? [photo] : undefined } };
+  return { title: `${a.title} · ${a.city}`, description: a.description || a.title, alternates: { canonical: `/activites/${a.id}` }, openGraph: { title: a.title, images: photo ? [photo] : undefined } };
 }
 
 export default async function ActivityPage({ params }: { params: { id: string } }) {

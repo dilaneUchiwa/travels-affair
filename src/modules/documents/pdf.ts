@@ -36,7 +36,7 @@ export async function renderBookingPdf(kind: DocumentKind, b: DocBooking, lang: 
 
   const row = (label: string, value: string) => {
     doc.font("Helvetica-Bold").fontSize(10).fillColor(GREY).text(label.toUpperCase(), { continued: false });
-    doc.font("Helvetica").fontSize(12).fillColor(INK).text(value || "—").moveDown(0.6);
+    doc.font("Helvetica").fontSize(12).fillColor(INK).text(value || "–").moveDown(0.6);
   };
 
   doc.font("Helvetica-Bold").fontSize(20).fillColor(INK).text(b.title);
@@ -53,7 +53,7 @@ export async function renderBookingPdf(kind: DocumentKind, b: DocBooking, lang: 
   if (kind === "invoice") {
     row(t("doc.invoiceNo"), `FAC-${b.reference}`);
     row(t("doc.date"), formatDateTime(b.createdAt, lang));
-    row(t("doc.billedTo"), `${b.user.name} — ${b.user.email}`);
+    row(t("doc.billedTo"), `${b.user.name} · ${b.user.email}`);
     row(b.title, priceBreakdown(b, t, lang));
     const paid = b.payments.find((p) => p.status === "SUCCEEDED");
     row(t("doc.paymentStatus"), paid ? t("doc.paid", { date: formatDateTime(paid.createdAt, lang), method: t(`pay.method.${paid.method}`) }) : t("doc.unpaid"));

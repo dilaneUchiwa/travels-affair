@@ -15,16 +15,15 @@ export const flightAdapter: ServiceAdapter = {
     const flight = await tx.query.flights.findFirst({ where: eq(flights.id, input.itemId) });
     if (!flight || flight.status !== "PUBLISHED" || flight.departAt <= new Date()) throw notFound("Ce vol n'est plus disponible.");
     // Décrément atomique : la condition WHERE empêche toute survente en cas de réservations simultanées.
-    const updated = await tx
+    const [updated] = await tx
       .update(flights)
       .set({ seatsAvailable: sql`${flights.seatsAvailable} - ${seats}` })
-      .where(and(eq(flights.id, flight.id), gte(flights.seatsAvailable, seats)))
-      .returning({ id: flights.id });
-    if (updated.length === 0) throw conflict("Il ne reste pas assez de places sur ce vol.");
+      .where(and(eq(flights.id, flight.id), gte(flights.seatsAvailable, seats)));
+    if (updated.affectedRows === 0) throw conflict("Il ne reste pas assez de places sur ce vol.");
     const details: [string, string][] = [
       ["company", flight.airline],
-      ["departure", `${flight.fromCity} (${flight.fromAirport}) — ${formatDateTime(flight.departAt)}`],
-      ["arrival", `${flight.toCity} (${flight.toAirport}) — ${formatDateTime(flight.arriveAt)}`],
+      ["departure", `${flight.fromCity} (${flight.fromAirport}) · ${formatDateTime(flight.departAt)}`],
+      ["arrival", `${flight.toCity} (${flight.toAirport}) · ${formatDateTime(flight.arriveAt)}`],
       ["duration", formatDuration(flight.departAt, flight.arriveAt)],
       ["baggage", flight.baggage],
       ["participants", input.participants.join(", ")],

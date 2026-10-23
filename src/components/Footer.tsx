@@ -11,7 +11,11 @@ export async function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Link className="brand" href="/">{name}</Link>
+            <Link className="brand" href="/">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="brand-logo" src="/img/site/logo.jpg" width="40" height="36" alt="" />
+              {name}
+            </Link>
             <p>{t("footer.about")}</p>
             <ul className="footer-contact">
               {cfg("agency.address") && <li>{cfg("agency.address")}</li>}

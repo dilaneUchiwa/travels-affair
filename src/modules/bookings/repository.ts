@@ -32,9 +32,9 @@ export async function dashboardStats() {
     .where(ACTIVE)
     .groupBy(bookings.currency);
   const perDay = await db
-    .select({ day: sql<string>`date(${bookings.createdAt}, 'unixepoch')`, count: sql<number>`count(*)` })
+    .select({ day: sql<string>`date_format(${bookings.createdAt}, '%Y-%m-%d')`, count: sql<number>`count(*)` })
     .from(bookings)
-    .where(sql`${bookings.createdAt} >= unixepoch() - 13 * 86400`)
-    .groupBy(sql`date(${bookings.createdAt}, 'unixepoch')`);
+    .where(sql`${bookings.createdAt} >= now() - interval 13 day`)
+    .groupBy(sql`date_format(${bookings.createdAt}, '%Y-%m-%d')`);
   return { byStatus, byType, revenue, perDay };
 }

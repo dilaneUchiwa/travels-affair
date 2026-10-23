@@ -40,7 +40,7 @@ export const carAdapter: ServiceAdapter = {
       details: [
         ["vehicle", name],
         ["category", v.category.name],
-        ["pickup", `${v.location} — ${input.pickupDate} (09:00)`],
+        ["pickup", `${v.location} · ${input.pickupDate} (09:00)`],
         ["return", `${input.returnDate} (09:00)`],
         ["days", String(days)],
         ["units", String(input.units)],

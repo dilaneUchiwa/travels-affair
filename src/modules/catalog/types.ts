@@ -1,4 +1,4 @@
-import type { AnySQLiteTable } from "drizzle-orm/sqlite-core";
+import type { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import type { ServiceType } from "@/modules/bookings/service-types";
 
 export type Opt = { value: string; label: string };
@@ -23,7 +23,7 @@ export type Row = { id: string; cells: string[]; published?: boolean };
  */
 export type Entity = {
   key: string; // segment d'URL : /admin/<key>
-  table: AnySQLiteTable;
+  table: AnyMySqlTable;
   idColumn?: string; // « id » par défaut ; « slug » pour les pages
   title: string;
   singular: string;

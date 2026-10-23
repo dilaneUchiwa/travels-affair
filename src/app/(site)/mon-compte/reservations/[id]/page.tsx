@@ -77,7 +77,7 @@ export default async function BookingPage({ params, searchParams }: { params: { 
         <h3>{t("booking.documents")}</h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: ".6rem", marginTop: ".6rem" }}>
           {DOCUMENT_KINDS.filter((k) => k === "summary" || b.status !== "PENDING_PAYMENT").map((k) => (
-            <a key={k} className="btn secondary small" href={`/api/documents/${b.id}/${k}`}>{t(`doc.${k}`)} — PDF</a>
+            <a key={k} className="btn secondary small" href={`/api/documents/${b.id}/${k}`}>{t(`doc.${k}`)} · PDF</a>
           ))}
           {hasTicket && <PrintButton />}
         </div>

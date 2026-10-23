@@ -14,13 +14,13 @@ export type PayOutcome = { paid: true } | { paid: false; redirectUrl?: string; p
 /** Clôture une tentative de paiement, une seule fois même si retour navigateur et webhook arrivent ensemble. */
 export async function settlePayment(paymentId: string, result: VerifyResult): Promise<boolean> {
   if (result.status === "PENDING") return false;
-  const won = await db
+  const [res] = await db
     .update(payments)
     .set({ status: result.status, failureReason: result.status === "FAILED" ? result.reason : null })
-    .where(and(eq(payments.id, paymentId), eq(payments.status, "PENDING")))
-    .returning();
-  if (won.length === 0) return false; // déjà traité
-  const payment = won[0];
+    .where(and(eq(payments.id, paymentId), eq(payments.status, "PENDING")));
+  if (res.affectedRows === 0) return false; // déjà traité (réclamation atomique : une seule ligne PENDING passe)
+  const payment = await db.query.payments.findFirst({ where: eq(payments.id, paymentId) });
+  if (!payment) return false;
   if (result.status === "SUCCEEDED") {
     try {
       await changeStatus(payment.bookingId, "PAID");
@@ -43,14 +43,14 @@ export async function payBooking(user: { id: string; role: string }, bookingId: 
 
   const provider = getProvider(input.method);
   // Chaque tentative est tracée (audit), réussie, refusée ou en cours.
-  const [payment] = await db
+  const paymentId = crypto.randomUUID();
+  await db
     .insert(payments)
-    .values({ bookingId: booking.id, method: input.method, provider: provider.id, amount: booking.total, currency: booking.currency, status: "PENDING" })
-    .returning();
+    .values({ id: paymentId, bookingId: booking.id, method: input.method, provider: provider.id, amount: booking.total, currency: booking.currency, status: "PENDING" });
 
   const result = await provider.charge({
     reference: booking.reference,
-    paymentId: payment.id,
+    paymentId,
     amount: booking.total,
     currency: booking.currency,
     description: `${booking.title} (${booking.reference})`,
@@ -63,15 +63,15 @@ export async function payBooking(user: { id: string; role: string }, bookingId: 
   });
 
   if (result.status === "PENDING") {
-    await db.update(payments).set({ providerReference: result.providerReference }).where(eq(payments.id, payment.id));
+    await db.update(payments).set({ providerReference: result.providerReference }).where(eq(payments.id, paymentId));
     return { paid: false, pending: true, redirectUrl: result.redirectUrl };
   }
   if (result.status === "SUCCEEDED") {
-    await db.update(payments).set({ providerReference: result.providerReference }).where(eq(payments.id, payment.id));
-    await settlePayment(payment.id, { status: "SUCCEEDED" });
+    await db.update(payments).set({ providerReference: result.providerReference }).where(eq(payments.id, paymentId));
+    await settlePayment(paymentId, { status: "SUCCEEDED" });
     return { paid: true };
   }
-  await settlePayment(payment.id, { status: "FAILED", reason: result.reason });
+  await settlePayment(paymentId, { status: "FAILED", reason: result.reason });
   throw conflict(`Paiement refusé : ${result.reason}`);
 }
 

@@ -82,7 +82,7 @@ export const booking: Record<string, Entry> = {
 
   // E-mails
   "mail.hello": ["Bonjour {name},", "Hello {name},"],
-  "mail.signature": ["— L'équipe Travel's Affair", "— The Travel's Affair team"],
+  "mail.signature": ["L'équipe Travel's Affair", "The Travel's Affair team"],
   "mail.myBooking": ["Voir ma réservation", "View my booking"],
   "mail.yourSpace": ["Votre espace client :", "Your customer area:"],
   "mail.attached": ["Vos documents sont joints à cet e-mail.", "Your documents are attached to this email."],

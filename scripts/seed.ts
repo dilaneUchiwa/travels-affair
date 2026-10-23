@@ -8,6 +8,8 @@ import {
 // Utilise la photo réelle (.jpg, téléchargée par `npm run photos`) si elle existe, sinon l'illustration .svg fournie.
 const P = (...n: string[]) => JSON.stringify(n.map((x) => (existsSync(`public/img/p/${x}.jpg`) ? `/img/p/${x}.jpg` : `/img/p/${x}.svg`)));
 const L = (x: string) => JSON.stringify([`/img/airlines/${x}.svg`]);
+// MySQL ne supporte pas .returning() : on attribue un id applicatif à chaque ligne pour pouvoir le réutiliser (clés étrangères).
+const withId = <T extends object>(v: T) => ({ ...v, id: crypto.randomUUID() });
 const H = 3_600_000, DAY = 24 * H;
 const at = (days: number, hour: number) => {
   const d = new Date(Date.now() + days * DAY);
@@ -24,17 +26,20 @@ async function main() {
     { email: "admin@travels-affair.com", name: "Administrateur", role: "ADMIN", passwordHash: await bcrypt.hash("Admin123!", 10) },
     { email: "demo@client.com", name: "Client Démo", role: "CLIENT", passwordHash: await bcrypt.hash("Client123!", 10) },
     { email: "client.en@demo.com", name: "English Client", role: "CLIENT", lang: "en", passwordHash: await bcrypt.hash("Client123!", 10) },
-  ]).onConflictDoNothing();
+  ]);
 
   // ---- Compagnies aériennes (logos : monogrammes de démonstration, à remplacer par les logos officiels via l'admin)
-  const al = Object.fromEntries((await db.insert(airlines).values([
+  // MySQL ne renvoie pas les lignes insérées : on génère les id côté application (withId) pour les référencer ensuite.
+  const airlineRows = [
     { name: "Air France", code: "AF", country: "France", logo: L("air-france") },
     { name: "Brussels Airlines", code: "SN", country: "Belgique", logo: L("brussels-airlines") },
     { name: "Royal Air Maroc", code: "AT", country: "Maroc", logo: L("royal-air-maroc") },
     { name: "Turkish Airlines", code: "TK", country: "Turquie", logo: L("turkish-airlines") },
     { name: "Ethiopian Airlines", code: "ET", country: "Éthiopie", logo: L("ethiopian") },
     { name: "Camair-Co", code: "QC", country: "Cameroun", logo: L("camair-co") },
-  ]).returning()).map((a) => [a.name, a]));
+  ].map(withId);
+  await db.insert(airlines).values(airlineRows);
+  const al = Object.fromEntries(airlineRows.map((a) => [a.name, a]));
   const A = (n: string) => ({ airline: n, airlineId: al[n].id });
 
   // ---- Vols
@@ -50,11 +55,12 @@ async function main() {
   ]);
 
   // ---- Hébergements
-  const [h1, h2, h3] = await db.insert(hotels).values([
+  const [h1, h2, h3] = [
     { name: "Hôtel Akwa Palace", photos: P("hotel-akwa", "city-douala"), category: "HOTEL", stars: 4, country: "Cameroun", city: "Douala", address: "Boulevard de la Liberté, Akwa", description: "Hôtel d'affaires au cœur d'Akwa, à 20 minutes de l'aéroport.", amenities: "Wi-Fi, Piscine, Restaurant, Navette aéroport", conditions: "Arrivée à partir de 14 h, départ avant 12 h. Pièce d'identité exigée.", cancellationPolicy: "Annulation gratuite jusqu'à 48 h avant l'arrivée.", status: "PUBLISHED" },
     { name: "Résidence Les Palmiers", photos: P("hotel-palmiers", "city-yaounde"), category: "RESIDENCE", stars: 3, country: "Cameroun", city: "Yaoundé", address: "Bastos, rue 1.839", description: "Appartements meublés et équipés dans le quartier calme de Bastos.", amenities: "Wi-Fi, Cuisine équipée, Parking, Sécurité 24 h", conditions: "Caution demandée à l'arrivée.", cancellationPolicy: "Annulation gratuite jusqu'à 72 h avant l'arrivée.", status: "PUBLISHED" },
     { name: "Hôtel Rive Gauche", photos: P("hotel-rive-gauche", "city-paris"), category: "HOTEL", stars: 3, country: "France", city: "Paris", address: "12 rue des Écoles, 75005", description: "Petit hôtel de charme à deux pas du Quartier latin.", amenities: "Wi-Fi, Petit-déjeuner, Ascenseur", conditions: "Taxe de séjour en sus.", cancellationPolicy: "Non remboursable moins de 7 jours avant l'arrivée.", status: "PUBLISHED" },
-  ]).returning();
+  ].map(withId);
+  await db.insert(hotels).values([h1, h2, h3]);
   await db.insert(hotelProperties).values([
     { hotelId: h1.id, name: "Chambre double deluxe", capacity: 2, quantity: 12, roomsDetail: "Chambre — 1 lit king\nSalle de bain — douche et baignoire", amenities: "Climatisation, TV, Minibar, Coffre-fort", currency: "XAF", pricePerNight: 85000, status: "PUBLISHED" },
     { hotelId: h1.id, name: "Suite junior", capacity: 3, quantity: 4, roomsDetail: "Chambre — 1 lit king\nSalon — canapé-lit\nSalle de bain", amenities: "Climatisation, TV, Minibar, Balcon", currency: "XAF", pricePerNight: 150000, status: "PUBLISHED" },
@@ -63,10 +69,11 @@ async function main() {
   ]);
 
   // ---- Transports
-  const [p1, p2] = await db.insert(transportProviders).values([
+  const [p1, p2] = [
     { name: "Garanti Express", contact: "+237 6 90 00 00 01", description: "Transport interurbain Douala – Yaoundé." },
     { name: "Travel's Affair Transferts", contact: "+237 6 90 00 00 02", description: "Transferts aéroport avec chauffeur." },
-  ]).returning();
+  ].map(withId);
+  await db.insert(transportProviders).values([p1, p2]);
   await db.insert(transports).values([
     { providerId: p1.id, mode: "BUS", photos: P("transport-bus"), fromPlace: "Douala — Gare routière de Bonabéri", toPlace: "Yaoundé — Mvan", departAt: at(3, 6), arriveAt: at(3, 10), currency: "XAF", price: 6500, seatsAvailable: 40, accessConditions: "Bagage en soute : 1 valise par personne.", description: "Bus climatisé, départ à l'heure.", status: "PUBLISHED" },
     { providerId: p1.id, mode: "TRAIN", photos: P("transport-train"), fromPlace: "Douala — Gare", toPlace: "Yaoundé — Gare", departAt: at(4, 7), arriveAt: at(4, 12), currency: "XAF", price: 8000, seatsAvailable: 120, description: "Train express Douala – Yaoundé.", status: "PUBLISHED" },
@@ -74,11 +81,14 @@ async function main() {
   ]);
 
   // ---- Véhicules
-  const [b1, b2] = await db.insert(vehicleBrands).values([{ name: "Toyota" }, { name: "Hyundai" }]).returning();
-  const [c1, c2, c3] = await db.insert(vehicleCategories).values([{ name: "Citadine" }, { name: "SUV" }, { name: "Minibus" }]).returning();
-  const [m1, m2, m3] = await db.insert(vehicleModels).values([
+  const [b1, b2] = [{ name: "Toyota" }, { name: "Hyundai" }].map(withId);
+  await db.insert(vehicleBrands).values([b1, b2]);
+  const [c1, c2, c3] = [{ name: "Citadine" }, { name: "SUV" }, { name: "Minibus" }].map(withId);
+  await db.insert(vehicleCategories).values([c1, c2, c3]);
+  const [m1, m2, m3] = [
     { brandId: b1.id, name: "Yaris" }, { brandId: b1.id, name: "Land Cruiser" }, { brandId: b2.id, name: "H1 Minibus" },
-  ]).returning();
+  ].map(withId);
+  await db.insert(vehicleModels).values([m1, m2, m3]);
   await db.insert(vehicles).values([
     { photos: P("car-yaris"), modelId: m1.id, categoryId: c1.id, location: "Douala — Aéroport", seats: 5, units: 3, currency: "XAF", pricePerDay: 30000, amenities: "Climatisation, Boîte manuelle", conditions: "Permis de plus de 3 ans, caution 150 000 FCFA, kilométrage 200 km/jour inclus.", status: "PUBLISHED" },
     { photos: P("car-landcruiser"), modelId: m2.id, categoryId: c2.id, location: "Yaoundé — Centre", seats: 7, units: 2, currency: "XAF", pricePerDay: 85000, amenities: "Climatisation, 4x4, GPS", conditions: "Permis de plus de 5 ans, caution 400 000 FCFA.", status: "PUBLISHED" },
@@ -95,8 +105,8 @@ async function main() {
   await db.insert(pages).values([
     {
       slug: "agence", titleFr: "L'agence Travel's Affair", titleEn: "About Travel's Affair",
-      bodyFr: "Travel's Affair est une agence de voyage basée à Yaoundé, spécialisée dans les déplacements entre l'Afrique et l'Europe.\n\n## Notre mission\n\nSimplifier vos voyages : une seule plateforme pour vos vols, hébergements, transports, locations de voiture et activités, avec un paiement en ligne sécurisé et des documents clairs.\n\n## Nos engagements\n\nDes offres vérifiées par notre équipe, une facturation en francs CFA, euros ou dollars, et un accompagnement avant, pendant et après votre voyage.",
-      bodyEn: "Travel's Affair is a travel agency based in Yaoundé, specialising in trips between Africa and Europe.\n\n## Our mission\n\nMake travel simple: one platform for your flights, accommodation, transport, car rental and activities, with secure online payment and clear documents.\n\n## Our commitments\n\nOffers checked by our team, billing in CFA francs, euros or dollars, and support before, during and after your trip.",
+      bodyFr: "Située à Yaoundé - Tsinga, à proximité du Palais des Congrès et à deux pas de Bastos, le quartier des ambassades, des O.N.G. et des entreprises, Travel's Affair vous propose ses services pour tous vos déplacements professionnels et privés.\n\n## Notre savoir-faire\n\nAvec l'expérience et le savoir-faire de son équipe dirigeante 100% camerounaise et le dynamisme de ses agents, Travel's Affair détient l'agrément du Ministère du Tourisme et améliore chaque année ses performances pour se hisser parmi les premières agences du Cameroun. Notre agence est aujourd'hui une référence dans le monde du voyage aérien, tant au plan national qu'international.\n\n## Nos services\n\nVente de billets d'avion aux meilleurs prix, réservation d'hôtel et circuits touristiques. Vous êtes une société ou un particulier à la recherche de réactivité, d'une qualité de service irréprochable et d'une maîtrise de vos coûts : n'hésitez pas à nous demander un devis.\n\n## À votre service 24h/24\n\nEffectuez l'achat de votre billet 24h/24 et 7j/7 en nous contactant par téléphone ou WhatsApp. Le paiement s'effectue par Orange Money et le billet électronique vous est envoyé par e-mail.",
+      bodyEn: "Located in Yaoundé - Tsinga, near the Congress Palace and a stone's throw from Bastos — the district of embassies, NGOs and companies — Travel's Affair offers its services for all your business and private travel.\n\n## Our expertise\n\nWith the experience and know-how of its 100% Cameroonian management team and the drive of its agents, Travel's Affair holds the approval of the Ministry of Tourism and improves its performance every year to rank among Cameroon's leading agencies. Our agency is now a reference in the world of air travel, both nationally and internationally.\n\n## Our services\n\nAirline tickets at the best prices, hotel reservations and tourist circuits. Whether you are a company or an individual looking for responsiveness, impeccable service quality and cost control, feel free to ask us for a quote.\n\n## At your service 24/7\n\nBuy your ticket 24/7 by contacting us by phone or WhatsApp. Payment is made via Orange Money and your e-ticket is sent to you by email.",
     },
     {
       slug: "infos-pratiques", titleFr: "Informations pratiques", titleEn: "Travel information",

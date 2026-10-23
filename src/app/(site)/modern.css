@@ -4,17 +4,19 @@
    coins arrondis, ombres très douces, typographie Inter.
    ===================================================================== */
 :root {
-  --pine: #0f172a;  --pine-2: #1e293b;  --pine-3: #334155;
-  --fern: #2563eb;  --ember: #2563eb;  --ember-hi: #1d4ed8;
-  --amber: #93b4ff; --clay: #dc2626;
-  --stone: #64748b; --mist: #f1f5f9; --sand: #f1f5f9;
-  --paper: #ffffff; --ink: #0f172a;
-  --line: #e8ecf2; --line-2: #d5dbe5;
+  /* Charte Travel's Affair : bleu nuit (bandeaux) + bleu ciel (accents) + rouge (CTA) */
+  --pine: #0e1a4a;  --pine-2: #1b2a7a;  --pine-3: #27379a;
+  --fern: #00adef;  --ember: #e4002b;  --ember-hi: #c40020;
+  --amber: #38c3ff; --clay: #e4002b;
+  --sky: #00adef;   --navy: #1b2a7a;
+  --stone: #5b6472; --mist: #eef3fb; --sand: #eef3fb;
+  --paper: #ffffff; --ink: #0e1526;
+  --line: #e4e9f2; --line-2: #d0d8e8;
   --ff-display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ff-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 12px; --radius-lg: 22px; --radius-card: 20px;
-  --shadow-sm: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04);
-  --shadow-md: 0 24px 48px -12px rgba(15,23,42,.18);
+  --shadow-sm: 0 1px 2px rgba(14,26,74,.05), 0 4px 16px rgba(14,26,74,.05);
+  --shadow-md: 0 24px 48px -12px rgba(14,26,74,.20);
   --ok: #15803d; --warn: #b45309;
 }
 body { font-size: 1rem; line-height: 1.65; background: #fff; letter-spacing: -.005em; }
@@ -27,12 +29,12 @@ h1, h2, h3, h4 { font-weight: 650; letter-spacing: -.03em; line-height: 1.12; }
 
 /* Boutons : pleins, sobres */
 .btn { border-radius: 999px; font-weight: 600; padding: .85rem 1.4rem; letter-spacing: 0; }
-.btn:hover { transform: none; box-shadow: 0 8px 20px -6px rgba(37,99,235,.45); }
+.btn:hover { transform: none; box-shadow: 0 8px 20px -6px rgba(228,0,43,.42); }
 .btn.secondary, .btn-ghost { --bg: #fff; --fg: var(--ink); --bd: var(--line-2); }
 .btn.secondary:hover, .btn-ghost:hover { background: var(--mist); color: var(--ink); border-color: var(--line-2); }
 .btn.on-dark.secondary, .btn-ghost.on-dark { --fg: #fff; --bg: transparent; --bd: rgba(255,255,255,.45); }
 .btn-ghost.on-dark:hover { background: #fff; color: var(--ink); }
-.textlink:hover { color: var(--ember); }
+.textlink:hover { color: var(--sky); }
 
 /* En-tête : blanc translucide, texte sombre, partout */
 .site-header, .site-header.solid, .site-header.scrolled {
@@ -592,3 +594,30 @@ body { background: var(--page); }
 .tour:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
 .tour-book { font-weight: 650; }
 .service { background: #fff; border-color: transparent; box-shadow: var(--shadow-sm); }
+
+/* Carte vol : photo de la ville de destination en fond + trajet en surimpression */
+.tour-media .tour-route {
+  position: absolute; inset: 0; aspect-ratio: auto; background: none;
+  align-items: flex-end; justify-content: center; padding-bottom: .85rem;
+  color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.6); z-index: 2;
+}
+.tour-media .tour-route::before, .tour-media .tour-route::after { content: none; background: none; }
+.tour-media .tour-route .plane { color: #fff; }
+.tour-media::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(14,21,38,.74), rgba(14,21,38,.08) 48%, rgba(14,21,38,.32));
+}
+
+/* Bouton « Réserver » : header clair */
+.nav-dd-btn { color: var(--stone); }
+.nav-dd-btn:hover, .nav-dd.open .nav-dd-btn { color: var(--ink); }
+.nav-dd-menu a svg { color: var(--sky); }
+
+/* Menu « Réserver » : couleurs explicites et cohérentes (priorité élevée) */
+.nav-links .nav-dd-btn { color: var(--stone); font-weight: 500; font-size: .92rem; }
+.nav-links .nav-dd-btn:hover, .nav-links .nav-dd.open .nav-dd-btn { color: var(--ink); }
+.nav-links .nav-dd-menu { background: #fff; }
+.nav-links .nav-dd-menu a { color: var(--ink); font-weight: 600; }
+.nav-links .nav-dd-menu a::after { display: none; }        /* pas de soulignement de nav dans le panneau */
+.nav-links .nav-dd-menu a:hover { color: var(--ink); background: var(--mist); }
+.nav-links .nav-dd-menu a svg { color: var(--sky); }

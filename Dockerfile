@@ -7,7 +7,8 @@ RUN npm run build
 
 FROM node:22-alpine
 WORKDIR /app
-ENV NODE_ENV=production PORT=3000 DATABASE_URL=file:/data/app.db UPLOAD_DIR=/data/uploads
+# DATABASE_URL (MySQL) est fourni par l'environnement de déploiement (Render).
+ENV NODE_ENV=production PORT=3000 UPLOAD_DIR=/data/uploads
 COPY --from=build /app ./
 RUN mkdir -p /data/uploads
 VOLUME /data
