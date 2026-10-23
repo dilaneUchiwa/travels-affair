@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BookingBadge, Card, PageTitle, Strong, TableWrap, Td, Th, btnPrimary, inputCls } from "@/components/admin/ui";
 import { adminChangeStatusAction } from "@/modules/bookings/actions";
 import { listAllBookings } from "@/modules/bookings/service";
@@ -56,7 +57,7 @@ export default async function AdminBookings({ searchParams }: { searchParams: { 
             <Card key={b.id}>
               <div className="space-y-2 p-4 text-theme-sm text-gray-500 dark:text-gray-400">
                 <div className="flex items-start justify-between gap-2">
-                  <Strong>{b.reference}</Strong>
+                  <Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link>
                   <BookingBadge status={b.status} />
                 </div>
                 <p>{b.user.name} · {b.user.email}</p>
@@ -78,7 +79,7 @@ export default async function AdminBookings({ searchParams }: { searchParams: { 
               const next = isBookingStatus(b.status) ? allowedTransitions(b.status) : [];
               return (
                 <tr key={b.id}>
-                  <Td><Strong>{b.reference}</Strong>{formatDateTime(b.createdAt)}</Td>
+                  <Td><Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link><br />{formatDateTime(b.createdAt)}</Td>
                   <Td><Strong>{b.user.name}</Strong>{b.user.email}</Td>
                   <Td><Strong>{b.title}</Strong>{SERVICE[b.serviceType] ?? b.serviceType} · {b.quantity}</Td>
                   <Td>{formatMoney(b.total, b.currency)}</Td>

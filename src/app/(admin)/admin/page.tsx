@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookingBadge, Card, Metric, PageTitle, TableWrap, Td, Th } from "@/components/admin/ui";
+import { count, eq } from "drizzle-orm";
+import { db, users } from "@/db";
 import { getDashboardStats } from "@/modules/bookings/service";
 import { isServiceType } from "@/modules/bookings/service-types";
 import { offerCounts } from "@/modules/catalog/service";
@@ -36,7 +38,8 @@ function PerDayChart({ data }: { data: { day: string; count: number }[] }) {
 }
 
 export default async function AdminDashboard() {
-  const [{ byStatus, byType, revenue, perDay }, offers] = await Promise.all([getDashboardStats(), offerCounts()]);
+  const [{ byStatus, byType, revenue, perDay }, offers, clientsRow] = await Promise.all([getDashboardStats(), offerCounts(), db.select({ n: count() }).from(users).where(eq(users.role, "CLIENT"))]);
+  const clients = Number(clientsRow[0]?.n ?? 0);
   const total = byStatus.reduce((n, s) => n + Number(s.count), 0);
   const pending = Number(byStatus.find((s) => s.status === "PENDING_PAYMENT")?.count ?? 0);
   const toConfirm = Number(byStatus.find((s) => s.status === "PAID" || s.status === "AWAITING_CONFIRMATION")?.count ?? 0);
@@ -47,6 +50,7 @@ export default async function AdminDashboard() {
         <Metric label="Réservations" value={total} />
         <Metric label="En attente de paiement" value={pending} />
         <Metric label="À confirmer" value={toConfirm} hint="payées, en attente de confirmation" />
+        <Metric label="Clients" value={clients} hint="comptes clients inscrits" />
         {revenue.length === 0 ? <Metric label="Encaissé" value="0" /> : revenue.map((r) => <Metric key={r.currency} label={`Encaissé (${r.currency})`} value={formatMoney(Number(r.total), r.currency)} />)}
       </div>
 

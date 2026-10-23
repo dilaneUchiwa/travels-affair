@@ -20,6 +20,8 @@ const NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin", label: "Tableau de bord", exact: true, icon: icon("M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z") },
       { href: "/admin/reservations", label: "Réservations", icon: icon("M4 7h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4zM9 7v12") },
+      { href: "/admin/paiements", label: "Paiements", icon: icon("M3 7h18v10H3zM3 11h18M7 15h4") },
+      { href: "/admin/utilisateurs", label: "Utilisateurs", icon: icon("M16 20v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1M10 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 11a3 3 0 1 0-1.5-5.6") },
       { href: "/admin/emails", label: "E-mails envoyés", icon: icon("M3 6h18v12H3zM3 7l9 6 9-6") },
     ],
   },
