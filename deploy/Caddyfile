@@ -1,0 +1,4 @@
+{$DOMAIN}, www.{$DOMAIN} {
+	encode gzip zstd
+	reverse_proxy app:3000
+}

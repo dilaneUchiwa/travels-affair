@@ -1,0 +1,26 @@
+import type { Entry } from "../dictionary";
+
+export const auth: Record<string, Entry> = {
+  "auth.login": ["Connexion", "Log in"],
+  "auth.signup": ["Créer un compte", "Create an account"],
+  "auth.email": ["E-mail", "Email"],
+  "auth.password": ["Mot de passe", "Password"],
+  "auth.passwordNew": ["Mot de passe (8 caractères min.)", "Password (8 characters min.)"],
+  "auth.name": ["Nom complet", "Full name"],
+  "auth.submitLogin": ["Se connecter", "Log in"],
+  "auth.submitSignup": ["Créer mon compte", "Create my account"],
+  "auth.noAccount": ["Pas encore de compte ?", "No account yet?"],
+  "auth.haveAccount": ["Déjà inscrit ?", "Already registered?"],
+  "auth.forgot": ["Mot de passe oublié ?", "Forgot your password?"],
+  "auth.forgotTitle": ["Mot de passe oublié", "Forgot password"],
+  "auth.forgotLead": ["Saisissez votre e-mail : nous vous enverrons un lien valable une heure pour choisir un nouveau mot de passe.", "Enter your email: we will send you a link, valid for one hour, to choose a new password."],
+  "auth.forgotSubmit": ["Envoyer le lien", "Send the link"],
+  "auth.forgotSent": ["Si un compte existe avec cette adresse, un e-mail vient d'être envoyé.", "If an account exists for this address, an email has just been sent."],
+  "auth.resetTitle": ["Nouveau mot de passe", "New password"],
+  "auth.resetSubmit": ["Enregistrer le mot de passe", "Save password"],
+  "auth.resetDone": ["Mot de passe modifié. Vous pouvez vous connecter.", "Password changed. You can now log in."],
+  "mail.reset.subject": ["Réinitialisation de votre mot de passe", "Reset your password"],
+  "mail.reset.intro": ["Vous avez demandé à réinitialiser votre mot de passe. Ce lien est valable une heure :", "You asked to reset your password. This link is valid for one hour:"],
+  "mail.reset.cta": ["Choisir un nouveau mot de passe", "Choose a new password"],
+  "mail.reset.ignore": ["Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail : votre mot de passe reste inchangé.", "If you did not make this request, ignore this email: your password stays unchanged."],
+};

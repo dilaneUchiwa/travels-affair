@@ -1,0 +1,27 @@
+# Production : application + HTTPS automatique (Let's Encrypt) via Caddy + tâche planifiée des rappels.
+# Usage : cp .env.example .env (renseigner) ; DOMAIN=exemple.com docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes: [ "appdata:/data" ]
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: [ "80:80", "443:443" ]
+    environment: [ "DOMAIN=${DOMAIN:?définir DOMAIN}" ]
+    volumes: [ "./deploy/Caddyfile:/etc/caddy/Caddyfile:ro", "caddydata:/data" ]
+    depends_on: [ app ]
+  cron:
+    image: alpine:3
+    restart: unless-stopped
+    env_file: .env
+    # Rappels de départ, expiration des paiements en attente : toutes les 5 minutes
+    command: >
+      sh -c "apk add --no-cache curl >/dev/null && while true; do
+      curl -s -H \"Authorization: Bearer $$CRON_SECRET\" http://app:3000/api/cron/reminders >/dev/null; sleep 300; done"
+    depends_on: [ app ]
+volumes:
+  appdata:
+  caddydata:
