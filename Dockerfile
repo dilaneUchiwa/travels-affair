@@ -3,6 +3,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+# Variables NEXT_PUBLIC_* : inlinées au build. Fournies via build arg (Render : env var exposée au build).
+ARG NEXT_PUBLIC_TAWK_SRC=""
+ENV NEXT_PUBLIC_TAWK_SRC=$NEXT_PUBLIC_TAWK_SRC
 RUN npm run build
 
 FROM node:22-alpine
