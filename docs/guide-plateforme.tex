@@ -1,0 +1,340 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+% --- Palette Travel's Affair ---
+\definecolor{taSky}{HTML}{00ADEF}
+\definecolor{taNavy}{HTML}{1B2A7A}
+\definecolor{taDark}{HTML}{0E1A4A}
+\definecolor{taRed}{HTML}{E4002B}
+\definecolor{taMist}{HTML}{EEF3FB}
+\definecolor{taLine}{HTML}{D0D8E8}
+\definecolor{taStone}{HTML}{5B6472}
+
+\hypersetup{colorlinks=true,linkcolor=taNavy,urlcolor=taSky}
+
+% --- Titres ---
+\titleformat{\part}{\color{taRed}\huge\bfseries}{Partie \thepart}{0.8em}{}
+\titleformat{\section}{\color{taNavy}\Large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\color{taDark}\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.6em}
+
+% --- En-tête / pied ---
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\color{taNavy}\textbf{Travel's Affair}}
+\fancyhead[R]{\small\color{taStone}Guide de la plateforme}
+\fancyfoot[L]{\small\color{taStone}Documentation fonctionnelle}
+\fancyfoot[R]{\small\color{taStone}\thepage}
+
+% --- Encadrés ---
+\newtcolorbox{astuce}{colback=taMist,colframe=taSky,boxrule=0.8pt,arc=3pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
+\newtcolorbox{attention}{colback=taRed!6,colframe=taRed,boxrule=0.8pt,arc=3pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
+
+\newcommand{\etat}[1]{\textcolor{taNavy}{\texttt{#1}}}
+\newcommand{\chemin}[1]{\textcolor{taStone}{\texttt{#1}}}
+
+\begin{document}
+
+% ====================== COUVERTURE ======================
+\begin{titlepage}
+\centering
+\vspace*{1.6cm}
+\IfFileExists{../public/img/site/logo.jpg}{\includegraphics[width=5cm]{../public/img/site/logo.jpg}\\[1.0cm]}{}
+{\color{taNavy}\Huge\bfseries Guide de la plateforme\par}
+\vspace{0.4cm}
+{\color{taSky}\Large Espace client \& portail d'administration\par}
+\vspace{1.8cm}
+\begin{tcolorbox}[colback=taMist,colframe=taNavy,width=0.84\textwidth,arc=4pt]
+\centering\color{taDark}
+\large Plateforme de réservation \textbf{Travel's Affair}\\[4pt]
+\normalsize Vols \textbullet{} Hébergements \textbullet{} Transports \textbullet{} Location de véhicules \textbullet{} Activités\\[4pt]
+\small Voyages Afrique $\leftrightarrow$ Europe
+\end{tcolorbox}
+\vfill
+{\color{taStone}\small Agence de Yaoundé --- Face Tsinga Dubaï, Immeuble Italia Optique\\
+875 Av. du 27 Août 1940, BP 13368, Yaoundé, Cameroun\\[4pt]
++237 696 35 82 62 \textbullet{} agence.yaounde@travels-affair.com\par}
+\vspace{0.5cm}
+{\color{taStone}\small \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ##########################################################
+\part{Présentation générale}
+% ##########################################################
+
+\section{La plateforme en bref}
+Travel's Affair est une plateforme de réservation de voyages couvrant l'axe
+\textbf{Afrique $\leftrightarrow$ Europe}. Elle réunit cinq familles de services, un parcours
+de réservation et de paiement en ligne, un espace client, et un portail d'administration
+offrant une \textbf{vision 360\textdegree} de toute l'activité.
+
+\subsection{Les cinq services}
+\begin{center}
+\begin{longtable}{>{\raggedright}p{3.4cm} p{10cm}}
+\toprule
+\textbf{Service} & \textbf{Description} \\
+\midrule
+\endhead
+\textbf{Vols} & Aller simple, aller-retour ou multi-destinations ; escales, franchise bagages, places disponibles. \\
+\textbf{Hébergements} & Hôtels, résidences, lodges, appartements, maisons d'hôtes ; réservation par bien (chambre/suite) et par dates. \\
+\textbf{Transports} & Trajets terrestres assurés par des prestataires référencés. \\
+\textbf{Location de véhicules} & Véhicules par marque, modèle et catégorie, sur une période donnée. \\
+\textbf{Activités} & Excursions et activités à date programmée. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsection{Langues et devises}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Langues :} français (par défaut) et anglais. Le choix est mémorisé pour le visiteur.
+  \item \textbf{Devises :} \etat{XAF} (par défaut), \etat{EUR}, \etat{USD}.
+\end{itemize}
+
+\begin{astuce}
+La langue par défaut est le \textbf{français} et la devise par défaut le \textbf{franc CFA
+(XAF)} --- indépendamment des réglages du navigateur. Le visiteur peut en changer à tout moment.
+\end{astuce}
+
+\subsection{Identité visuelle}
+La plateforme reprend la charte de l'agence : bleu ciel \textbf{\#00ADEF}, bleu marine
+\textbf{\#1B2A7A} et rouge d'action \textbf{\#E4002B}, logo et photos de l'agence, logos des
+compagnies partenaires. Un widget de \textbf{chat en ligne} (Tawk.to) est disponible sur le site.
+
+% ##########################################################
+\part{Espace client (site public)}
+% ##########################################################
+
+\section{Navigation du site}
+Le site public donne accès aux rubriques suivantes :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Accueil} --- recherche, « Comment ça marche », services, offres en vedette, vitrine de l'agence et partenaires.
+  \item \textbf{Réserver} (menu déroulant) --- Vols, Hébergements, Transports, Location, Activités.
+  \item \textbf{L'agence}, \textbf{Infos pratiques}, \textbf{FAQ}, \textbf{Contact}.
+  \item \textbf{Compte} --- connexion, inscription, mot de passe oublié, mon compte.
+\end{itemize}
+
+\section{Parcours de réservation}
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Rechercher / parcourir} un service et ouvrir une offre pour en voir le détail
+        (prix, conditions, politique d'annulation).
+  \item \textbf{Réserver} : renseigner les voyageurs (et les dates/quantités pour un hébergement
+        ou une location). Un compte est requis ; sinon le visiteur est invité à se connecter.
+  \item \textbf{Payer} : la réservation est créée en \etat{PENDING\_PAYMENT} et redirige vers
+        l'écran de paiement.
+\end{enumerate}
+
+\section{Moyens de paiement}
+Selon la configuration de l'agence, les moyens suivants sont pris en charge :
+\begin{center}
+\begin{longtable}{>{\raggedright}p{4.6cm} p{8.8cm}}
+\toprule
+\textbf{Moyen} & \textbf{Prestataire} \\
+\midrule
+\endhead
+Carte bancaire & Stripe \\
+PayPal & PayPal \\
+Orange Money / MTN MoMo & Campay (ou CinetPay) \\
+Express Union & CinetPay \\
+(Mode démonstration) & Paiement simulé si aucun prestataire n'est configuré \\
+\bottomrule
+\end{longtable}
+\end{center}
+Après paiement, le client est redirigé vers la plateforme ; les prestataires notifient le
+serveur (webhooks) pour confirmer l'encaissement et faire évoluer la réservation.
+
+\section{Espace « Mon compte »}
+Le client y retrouve ses réservations, leur statut, et le détail de chaque dossier
+(\chemin{/mon-compte/reservations/[id]}) : récapitulatif, paiements, documents et possibilité
+d'\textbf{annuler} une réservation encore en attente de paiement.
+
+\section{Vérification d'un dossier (QR code)}
+Chaque billet/bon porte un \textbf{QR code} renvoyant vers une page publique de vérification
+(\chemin{/verifier/[référence]}). Elle affiche un état :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Valide} --- statut payé, en attente de confirmation, confirmé ou modifié ;
+  \item \textbf{Non réglé} --- en attente de paiement ;
+  \item \textbf{Invalide} --- annulé/remboursé ou référence inconnue.
+\end{itemize}
+
+% ##########################################################
+\part{Portail d'administration}
+% ##########################################################
+
+\section{Accès et rubriques}
+L'accès est réservé aux comptes \etat{ADMIN} ; toute page \chemin{/admin} non authentifiée
+redirige vers la connexion. Le menu latéral est organisé en groupes :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Pilotage} : Tableau de bord, Réservations, Paiements, Utilisateurs, E-mails envoyés.
+  \item \textbf{Offres} : Vols, Hébergements, Biens (chambres), Transports, Locations de véhicules, Activités.
+  \item \textbf{Référentiels} : Compagnies aériennes, Prestataires transport, Marques, Modèles, Catégories de véhicules.
+  \item \textbf{Configuration} : paramètres de l'agence.
+  \item \textbf{Contenu} : Pages d'information, FAQ, Messages de contact.
+\end{itemize}
+
+\section{Tableau de bord}
+Écran d'accueil agrégeant en un coup d'\oe{}il : le \textbf{chiffre d'affaires} consolidé, la
+répartition des \textbf{réservations par statut} et \textbf{par service}, l'évolution récente du
+volume, le nombre de \textbf{clients} et le nombre d'offres par service.
+
+\section{Gestion des réservations}
+
+\subsection{Consulter et rechercher}
+La page \textbf{Réservations} liste tous les dossiers (référence, client, service, montant,
+statut) avec trois outils :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Recherche} libre : référence, nom du client, e-mail ou intitulé.
+  \item \textbf{Filtre statut} ; \textbf{Filtre service}.
+\end{itemize}
+
+\subsection{Cycle de vie d'une réservation}
+\begin{center}
+\begin{longtable}{>{\raggedright}p{4.2cm} p{9cm}}
+\toprule
+\textbf{Statut} & \textbf{Signification} \\
+\midrule
+\endhead
+\etat{PENDING\_PAYMENT} & Réservation créée, en attente de règlement. \\
+\etat{PAID} & Paiement reçu (en ligne ou encaissé manuellement). \\
+\etat{AWAITING\_CONFIRMATION} & Paiement validé, confirmation du prestataire en cours. \\
+\etat{CONFIRMED} & Dossier confirmé : billet / bon de réservation disponible. \\
+\etat{MODIFIED} & Dossier modifié après confirmation. \\
+\etat{CANCELLED} & Réservation annulée. \\
+\etat{REFUNDED} & Réservation remboursée. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\begin{attention}
+Seules les transitions \textbf{autorisées} depuis le statut courant sont proposées dans le
+sélecteur, ce qui évite les manipulations incohérentes. Le passage en \etat{CANCELLED} ou
+\etat{REFUNDED} remet les disponibilités en stock le cas échéant.
+\end{attention}
+
+\section{Détail d'une réservation (vue 360\textdegree)}
+En cliquant sur une référence, on ouvre la fiche complète :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Informations client} : nom, e-mail, coordonnées.
+  \item \textbf{Facturation} : service, quantité, devise, montant total.
+  \item \textbf{Voyageurs / participants.}
+  \item \textbf{Historique des paiements} du dossier.
+  \item \textbf{QR code} du billet (dès que le statut le permet).
+  \item \textbf{Documents PDF} : confirmation, récapitulatif, facture, bon de réservation.
+  \item \textbf{Actions} : encaissement manuel et renvoi d'e-mail.
+\end{itemize}
+
+\subsection{Encaissement manuel}
+Pour les règlements reçus hors ligne (Orange Money, MTN MoMo, WhatsApp, espèces, virement\dots) :
+\begin{enumerate}[leftmargin=1.6em]
+  \item Ouvrir un dossier au statut \etat{PENDING\_PAYMENT}.
+  \item Dans le bloc \textbf{Encaissement}, choisir le moyen reçu et valider.
+  \item Un paiement \etat{SUCCEEDED} (fournisseur « MANUAL ») est créé et la réservation passe
+        automatiquement en \etat{PAID}.
+\end{enumerate}
+\begin{astuce}
+Le bloc d'encaissement n'apparaît que pour les dossiers \textit{en attente de paiement}.
+\end{astuce}
+
+\subsection{Renvoi d'e-mail}
+Ré-expédition d'une communication au client, avec les \textbf{pièces jointes PDF} le cas échéant :
+\begin{center}
+\begin{longtable}{>{\raggedright}p{5cm} p{8.2cm}}
+\toprule
+\textbf{Type d'e-mail} & \textbf{Contenu} \\
+\midrule
+\endhead
+En attente de paiement & Rappel de règlement. \\
+Paiement reçu & Accusé de réception + facture. \\
+Confirmé & Confirmation + billet / bon de réservation. \\
+Modifié & Notification de modification. \\
+Annulé & Avis d'annulation. \\
+Remboursé & Avis de remboursement. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{Créer une réservation pour un client}
+Vente au comptoir ou par téléphone, sans passage du client par le site :
+\begin{enumerate}[leftmargin=1.6em]
+  \item Page Réservations $\rightarrow$ \textbf{Nouvelle réservation}.
+  \item Sélectionner le \textbf{client}, le \textbf{service}, puis l'\textbf{offre publiée}.
+  \item Pour un hébergement ou une location : renseigner les \textbf{dates} et la quantité.
+  \item Saisir les \textbf{voyageurs / participants} (un nom par ligne).
+  \item Valider : la réservation est créée en \etat{PENDING\_PAYMENT}, un e-mail est envoyé au
+        client, et elle devient encaissable depuis son détail.
+\end{enumerate}
+\begin{attention}
+Seules les \textbf{offres publiées} (et, pour vols/transports/activités, à venir) sont
+proposées. Si aucune offre n'existe pour un service, la liste l'indique.
+\end{attention}
+
+\section{Paiements}
+La page \textbf{Paiements} centralise tous les encaissements (en ligne et manuels) avec le
+rapprochement client $\rightarrow$ réservation : indicateurs de synthèse, recherche, filtres par
+\textbf{statut} et par \textbf{moyen}, et \textbf{export CSV}.
+
+\section{Utilisateurs et rôles}
+Liste des comptes (nom, e-mail, rôle, langue, nombre de réservations, date d'inscription), avec
+recherche et export CSV. Le rôle (\etat{CLIENT} ou \etat{ADMIN}) se change depuis la liste.
+\begin{attention}
+\textbf{Anti-verrouillage :} un administrateur ne peut pas rétrograder son propre compte --- il
+reste toujours au moins un administrateur actif.
+\end{attention}
+
+\section{Catalogue des offres et référentiels}
+La gestion du catalogue suit un modèle unifié. Chaque entité se liste, se crée, se modifie et
+(selon le cas) se publie depuis \chemin{/admin/<entité>}.
+
+\subsection{Offres (publiables)}
+Vols, Hébergements, Biens (chambres/suites), Transports, Locations de véhicules, Activités.
+Chaque offre a un statut \etat{DRAFT} (brouillon) ou \etat{PUBLISHED} (publié). Seules les offres
+\textbf{publiées} sont visibles côté client et réservables.
+
+\subsection{Référentiels}
+Compagnies aériennes, prestataires de transport, marques / modèles / catégories de véhicules.
+Ils alimentent les listes déroulantes lors de la création des offres (ex. la compagnie d'un vol).
+
+\section{Contenu éditorial}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Pages d'information} : contenu des pages du site (ex. infos pratiques).
+  \item \textbf{FAQ} : questions/réponses affichées publiquement.
+  \item \textbf{Messages de contact} : demandes reçues via le formulaire du site.
+\end{itemize}
+
+\section{E-mails envoyés et configuration}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{E-mails envoyés} : journal des communications adressées aux clients.
+  \item \textbf{Configuration} : paramètres de l'agence (coordonnées, horaires, réseaux, etc.).
+\end{itemize}
+
+\section{Exports CSV (comptabilité)}
+Trois exports via le bouton \textbf{Exporter CSV} : \textbf{Réservations}, \textbf{Paiements},
+\textbf{Utilisateurs}. Fichiers encodés en \textbf{UTF-8 avec BOM} et séparés par
+\textbf{point-virgule} : ouverture directe dans Excel (configuration française) sans souci
+d'accents. Accès réservé aux administrateurs.
+
+\vspace{1.2cm}
+\begin{center}
+\color{taStone}\small --- Fin du guide ---
+\end{center}
+
+\end{document}
