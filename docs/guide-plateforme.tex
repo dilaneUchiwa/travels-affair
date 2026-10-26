@@ -16,7 +16,7 @@
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 
-% --- Palette Travel's Affair ---
+% Palette Travel's Affair
 \definecolor{taSky}{HTML}{00ADEF}
 \definecolor{taNavy}{HTML}{1B2A7A}
 \definecolor{taDark}{HTML}{0E1A4A}
@@ -27,13 +27,13 @@
 
 \hypersetup{colorlinks=true,linkcolor=taNavy,urlcolor=taSky}
 
-% --- Titres ---
+% Titres
 \titleformat{\part}{\color{taRed}\huge\bfseries}{Partie \thepart}{0.8em}{}
 \titleformat{\section}{\color{taNavy}\Large\bfseries}{\thesection.}{0.6em}{}
 \titleformat{\subsection}{\color{taDark}\large\bfseries}{\thesubsection}{0.6em}{}
 \titlespacing*{\section}{0pt}{1.4em}{0.6em}
 
-% --- En-tête / pied ---
+% En-tete / pied
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -43,7 +43,7 @@
 \fancyfoot[L]{\small\color{taStone}Documentation fonctionnelle}
 \fancyfoot[R]{\small\color{taStone}\thepage}
 
-% --- Encadrés ---
+% Encadres
 \newtcolorbox{astuce}{colback=taMist,colframe=taSky,boxrule=0.8pt,arc=3pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
 \newtcolorbox{attention}{colback=taRed!6,colframe=taRed,boxrule=0.8pt,arc=3pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
 
@@ -68,7 +68,7 @@
 \small Voyages Afrique $\leftrightarrow$ Europe
 \end{tcolorbox}
 \vfill
-{\color{taStone}\small Agence de Yaoundé --- Face Tsinga Dubaï, Immeuble Italia Optique\\
+{\color{taStone}\small Agence de Yaoundé, Face Tsinga Dubaï, Immeuble Italia Optique\\
 875 Av. du 27 Août 1940, BP 13368, Yaoundé, Cameroun\\[4pt]
 +237 696 35 82 62 \textbullet{} agence.yaounde@travels-affair.com\par}
 \vspace{0.5cm}
@@ -112,7 +112,7 @@ offrant une \textbf{vision 360\textdegree} de toute l'activité.
 
 \begin{astuce}
 La langue par défaut est le \textbf{français} et la devise par défaut le \textbf{franc CFA
-(XAF)} --- indépendamment des réglages du navigateur. Le visiteur peut en changer à tout moment.
+(XAF)} : indépendamment des réglages du navigateur. Le visiteur peut en changer à tout moment.
 \end{astuce}
 
 \subsection{Identité visuelle}
@@ -127,10 +127,10 @@ compagnies partenaires. Un widget de \textbf{chat en ligne} (Tawk.to) est dispon
 \section{Navigation du site}
 Le site public donne accès aux rubriques suivantes :
 \begin{itemize}[leftmargin=1.4em]
-  \item \textbf{Accueil} --- recherche, « Comment ça marche », services, offres en vedette, vitrine de l'agence et partenaires.
-  \item \textbf{Réserver} (menu déroulant) --- Vols, Hébergements, Transports, Location, Activités.
+  \item \textbf{Accueil} : recherche, « Comment ça marche », services, offres en vedette, vitrine de l'agence et partenaires.
+  \item \textbf{Réserver} (menu déroulant) : Vols, Hébergements, Transports, Location, Activités.
   \item \textbf{L'agence}, \textbf{Infos pratiques}, \textbf{FAQ}, \textbf{Contact}.
-  \item \textbf{Compte} --- connexion, inscription, mot de passe oublié, mon compte.
+  \item \textbf{Compte} : connexion, inscription, mot de passe oublié, mon compte.
 \end{itemize}
 
 \section{Parcours de réservation}
@@ -171,10 +171,18 @@ d'\textbf{annuler} une réservation encore en attente de paiement.
 Chaque billet/bon porte un \textbf{QR code} renvoyant vers une page publique de vérification
 (\chemin{/verifier/[référence]}). Elle affiche un état :
 \begin{itemize}[leftmargin=1.4em]
-  \item \textbf{Valide} --- statut payé, en attente de confirmation, confirmé ou modifié ;
-  \item \textbf{Non réglé} --- en attente de paiement ;
-  \item \textbf{Invalide} --- annulé/remboursé ou référence inconnue.
+  \item \textbf{Valide} : statut payé, en attente de confirmation, confirmé ou modifié ;
+  \item \textbf{Non réglé} : en attente de paiement ;
+  \item \textbf{Invalide} : annulé/remboursé ou référence inconnue.
 \end{itemize}
+
+\begin{attention}
+\textbf{Ce n'est pas un billet de voyage.} Les documents émis par la plateforme (confirmation,
+récapitulatif, bon de réservation) attestent la réservation mais ne constituent pas le titre de
+transport. Le \textbf{billet (ou bon) de voyage définitif est délivré par l'agence} Travel's
+Affair après confirmation. Cette mention est rappelée sur les PDF, dans l'espace client et sur
+la page de vérification.
+\end{attention}
 
 % ##########################################################
 \part{Portail d'administration}
@@ -296,7 +304,7 @@ rapprochement client $\rightarrow$ réservation : indicateurs de synthèse, rech
 Liste des comptes (nom, e-mail, rôle, langue, nombre de réservations, date d'inscription), avec
 recherche et export CSV. Le rôle (\etat{CLIENT} ou \etat{ADMIN}) se change depuis la liste.
 \begin{attention}
-\textbf{Anti-verrouillage :} un administrateur ne peut pas rétrograder son propre compte --- il
+\textbf{Anti-verrouillage :} un administrateur ne peut pas rétrograder son propre compte : il
 reste toujours au moins un administrateur actif.
 \end{attention}
 
@@ -334,7 +342,7 @@ d'accents. Accès réservé aux administrateurs.
 
 \vspace{1.2cm}
 \begin{center}
-\color{taStone}\small --- Fin du guide ---
+\color{taStone}\small Fin du guide
 \end{center}
 
 \end{document}

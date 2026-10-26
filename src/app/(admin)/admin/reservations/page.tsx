@@ -1,27 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookingBadge, Card, PageTitle, Strong, TableWrap, Td, Th, btnOutline, btnPrimary, inputCls } from "@/components/admin/ui";
-import { adminChangeStatusAction } from "@/modules/bookings/actions";
 import { listAllBookings } from "@/modules/bookings/service";
-import { BOOKING_STATUSES, STATUS_LABELS, allowedTransitions, isBookingStatus } from "@/modules/bookings/status";
+import { BOOKING_STATUSES, STATUS_LABELS, isBookingStatus } from "@/modules/bookings/status";
 import { formatDateTime } from "@/shared/dates";
 import { formatMoney } from "@/shared/money";
 
 export const metadata: Metadata = { title: "Réservations" };
 export const dynamic = "force-dynamic";
 
-function StatusForm({ id, next }: { id: string; next: ReturnType<typeof allowedTransitions> }) {
-  if (next.length === 0) return <>–</>;
-  return (
-    <form action={adminChangeStatusAction} className="flex items-center gap-2">
-      <input type="hidden" name="bookingId" value={id} />
-      <select name="status" aria-label="Nouveau statut" className={`${inputCls} min-w-44`}>
-        {next.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
-      </select>
-      <button type="submit" className={btnPrimary}>OK</button>
-    </form>
-  );
-}
+const btnDetail = "inline-flex items-center justify-center rounded-lg border border-brand-500 px-3 py-1.5 text-theme-sm font-medium text-brand-500 transition hover:bg-brand-50 dark:hover:bg-brand-500/10";
 
 const SERVICE: Record<string, string> = { FLIGHT: "Vol", HOTEL: "Hébergement", TRANSPORT: "Transport", CAR: "Location", ACTIVITY: "Activité" };
 
@@ -60,45 +48,37 @@ export default async function AdminBookings({ searchParams }: { searchParams: { 
       </form>
       <div className="space-y-3 md:hidden">
         {bookings.length === 0 && <Card><p className="p-5 text-theme-sm text-gray-500">Aucune réservation.</p></Card>}
-        {bookings.map((b) => {
-          const next = isBookingStatus(b.status) ? allowedTransitions(b.status) : [];
-          return (
-            <Card key={b.id}>
-              <div className="space-y-2 p-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                <div className="flex items-start justify-between gap-2">
-                  <Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link>
-                  <BookingBadge status={b.status} />
-                </div>
-                <p>{b.user.name} · {b.user.email}</p>
-                <p><span className="font-medium text-gray-800 dark:text-white/90">{b.title}</span> · {SERVICE[b.serviceType] ?? b.serviceType} · {b.quantity}</p>
-                <p>{formatMoney(b.total, b.currency)} · {formatDateTime(b.createdAt)}</p>
-                <div className="pt-1"><StatusForm id={b.id} next={next} /></div>
+        {bookings.map((b) => (
+          <Card key={b.id}>
+            <div className="space-y-2 p-4 text-theme-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-start justify-between gap-2">
+                <Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link>
+                <BookingBadge status={b.status} />
               </div>
-            </Card>
-          );
-        })}
+              <p>{b.user.name} · {b.user.email}</p>
+              <p><span className="font-medium text-gray-800 dark:text-white/90">{b.title}</span> · {SERVICE[b.serviceType] ?? b.serviceType} · {b.quantity}</p>
+              <p>{formatMoney(b.total, b.currency)} · {formatDateTime(b.createdAt)}</p>
+              <div className="pt-1"><Link href={`/admin/reservations/${b.id}`} className={btnDetail}>Détails</Link></div>
+            </div>
+          </Card>
+        ))}
       </div>
       <div className="hidden md:block">
       <Card>
         <TableWrap>
-          <thead><tr><Th>Référence</Th><Th>Client</Th><Th>Vol</Th><Th>Total</Th><Th>Statut</Th><Th>Changer le statut</Th></tr></thead>
+          <thead><tr><Th>Référence</Th><Th>Client</Th><Th>Prestation</Th><Th>Total</Th><Th>Statut</Th><Th>Action</Th></tr></thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {bookings.length === 0 && <tr><Td>Aucune réservation.</Td></tr>}
-            {bookings.map((b) => {
-              const next = isBookingStatus(b.status) ? allowedTransitions(b.status) : [];
-              return (
-                <tr key={b.id}>
-                  <Td><Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link><br />{formatDateTime(b.createdAt)}</Td>
-                  <Td><Strong>{b.user.name}</Strong>{b.user.email}</Td>
-                  <Td><Strong>{b.title}</Strong>{SERVICE[b.serviceType] ?? b.serviceType} · {b.quantity}</Td>
-                  <Td>{formatMoney(b.total, b.currency)}</Td>
-                  <Td><BookingBadge status={b.status} /></Td>
-                  <Td>
-                    <StatusForm id={b.id} next={next} />
-                  </Td>
-                </tr>
-              );
-            })}
+            {bookings.map((b) => (
+              <tr key={b.id}>
+                <Td><Link href={`/admin/reservations/${b.id}`} className="font-semibold text-brand-500">{b.reference}</Link><br />{formatDateTime(b.createdAt)}</Td>
+                <Td><Strong>{b.user.name}</Strong>{b.user.email}</Td>
+                <Td><Strong>{b.title}</Strong>{SERVICE[b.serviceType] ?? b.serviceType} · {b.quantity}</Td>
+                <Td>{formatMoney(b.total, b.currency)}</Td>
+                <Td><BookingBadge status={b.status} /></Td>
+                <Td><Link href={`/admin/reservations/${b.id}`} className={btnDetail}>Détails</Link></Td>
+              </tr>
+            ))}
           </tbody>
         </TableWrap>
       </Card>

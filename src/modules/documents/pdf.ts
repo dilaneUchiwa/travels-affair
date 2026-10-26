@@ -39,6 +39,17 @@ export async function renderBookingPdf(kind: DocumentKind, b: DocBooking, lang: 
     doc.font("Helvetica").fontSize(12).fillColor(INK).text(value || "–").moveDown(0.6);
   };
 
+  // Avertissement : ce document n'est pas un billet de voyage (hors facture, document purement financier).
+  if (kind !== "invoice") {
+    const bx = 50, bw = doc.page.width - 100;
+    const top = doc.y;
+    doc.save().roundedRect(bx, top, bw, 46, 5).fillAndStroke("#fdeaec", "#e4002b").restore();
+    doc.font("Helvetica-Bold").fontSize(10).fillColor("#e4002b").text(t("doc.notTicket"), bx + 12, top + 8, { width: bw - 24 });
+    doc.font("Helvetica").fontSize(8.5).fillColor(INK).text(t("doc.notTicketHint"), bx + 12, top + 22, { width: bw - 24 });
+    doc.y = top + 58;
+    doc.fillColor(INK);
+  }
+
   doc.font("Helvetica-Bold").fontSize(20).fillColor(INK).text(b.title);
   doc.font("Helvetica").fontSize(12).fillColor(GREY).text(b.subtitle).moveDown(1);
 

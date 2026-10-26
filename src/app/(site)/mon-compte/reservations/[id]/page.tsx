@@ -38,6 +38,8 @@ export default async function BookingPage({ params, searchParams }: { params: { 
         <div className="alert info no-print">{t("booking.awaitingPay")} <Link href={`/reservation/${b.id}/paiement`}>{t("booking.payNow")}</Link></div>
       )}
 
+      <div className="alert warn"><strong>{t("doc.notTicket")}.</strong> {t("doc.notTicketHint")}</div>
+
       <div className="ticket">
         <div className="ticket-head">
           <div><div style={{ opacity: .8, fontSize: ".85rem" }}>Travel&apos;s Affair · {t(`service.${b.serviceType}`)}</div><h1 style={{ color: "#fff", margin: 0 }}>{b.reference}</h1></div>
