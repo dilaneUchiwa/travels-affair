@@ -165,3 +165,9 @@ input[type="radio"], input[type="checkbox"] { width: auto; }
 .service small { display: block; color: var(--stone); font-weight: 500; margin-top: .25rem; }
 @media (max-width: 960px) { .offer-grid { grid-template-columns: repeat(2, 1fr); } .services { grid-template-columns: repeat(2, 1fr); } .gallery { grid-template-columns: 1fr; } .gallery .side { display: none; } }
 @media (max-width: 620px) { .offer-grid { grid-template-columns: 1fr; } }
+
+/* Demo banner */
+.demo-banner { background: #1a1a2e; color: #fff; text-align: center; font-size: .78rem; letter-spacing: .03em; padding: .4rem 1rem; position: sticky; top: 0; z-index: 999; }
+
+/* Agency monogram (demo sans logo) */
+.brand-mono { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; background: var(--ember); color: #fff; font-weight: 700; font-size: .9rem; flex-shrink: 0; }

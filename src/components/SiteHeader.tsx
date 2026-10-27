@@ -52,9 +52,13 @@ export function SiteHeader({ user, logout, currency, currencies }: Props) {
       <div className="wrap">
         <nav className="nav" aria-label={t("nav.main")}>
           <Link className="brand" href="/" aria-label={t("nav.homeAria")}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="brand-logo" src="/img/site/logo.jpg" width="40" height="36" alt="Travel's Affair" />
-            Travel&apos;s Affair
+            {process.env.NEXT_PUBLIC_AGENCY_NAME ? (
+              <span className="brand-mono" aria-hidden="true">{process.env.NEXT_PUBLIC_AGENCY_NAME.slice(0, 2).toUpperCase()}</span>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="brand-logo" src="/img/site/logo.jpg" width="40" height="36" alt="" />
+            )}
+            {process.env.NEXT_PUBLIC_AGENCY_NAME ?? "Travel’s Affair"}
           </Link>
           <div className={`nav-menu${open ? " open" : ""}`} id="navMenu">
             <ul className="nav-links">

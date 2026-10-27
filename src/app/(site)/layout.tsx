@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { DemoBanner } from "@/components/DemoBanner";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { TawkChat } from "@/components/TawkChat";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <I18nProvider lang={lang} dict={dictionaryFor(lang)}>
+          <DemoBanner />
           <Header />
           {children}
           <Footer />

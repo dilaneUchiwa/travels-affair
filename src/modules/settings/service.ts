@@ -32,9 +32,17 @@ export async function loadConfig(force = false): Promise<Config> {
   return c;
 }
 
+/** Surcharges issues des variables d'environnement NEXT_PUBLIC_AGENCY_* (personnalisation démo). */
+const ENV_OVERRIDES: Record<string, string | undefined> = {
+  "agency.name":    process.env.NEXT_PUBLIC_AGENCY_NAME,
+  "agency.phone":   process.env.NEXT_PUBLIC_AGENCY_PHONE,
+  "agency.email":   process.env.NEXT_PUBLIC_AGENCY_EMAIL,
+  "agency.address": process.env.NEXT_PUBLIC_AGENCY_ADDRESS,
+};
+
 /** Dernière configuration chargée (usage synchrone dans les composants serveur ; voir loadConfig). */
 export const config = (): Config => snapshot;
-export const cfg = (key: string): string => snapshot[key] ?? DEFAULTS[key] ?? "";
+export const cfg = (key: string): string => ENV_OVERRIDES[key] || (snapshot[key] ?? DEFAULTS[key] ?? "");
 export const cfgList = (key: string) => csv(cfg(key));
 
 export function validate(def: SettingDef, raw: string): string {
